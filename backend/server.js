@@ -5,6 +5,7 @@ import establishMongoConnection from "./db/establishMongoConnection.js";
 import messageRoutes from "./routes/message.routes.js";
 import cookieParser from "cookie-parser";
 import userRoute from "./routes/user.routes.js";
+import groupRoutes from "./routes/group.routes.js";
 import { app, server } from "./socket/socket.js";
 import path from "path";
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoute);
+app.use("/api/groups", groupRoutes);
 app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
 app.get("*", (req, res) => {

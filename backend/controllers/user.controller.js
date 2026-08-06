@@ -10,3 +10,16 @@ export const getUsersForSideBar = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const updatePublicKey = async (req, res) => {
+  try {
+    const { publicKey } = req.body;
+    const userId = req.user._id;
+    const user = await User.findByIdAndUpdate(userId, { publicKey }, { new: true }).select("-password");
+    res.status(200).json(user);
+  } catch (error) {
+    console.log("Error in updatePublicKey: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+

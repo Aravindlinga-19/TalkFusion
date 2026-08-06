@@ -5,16 +5,35 @@ const messageSchema = new mongoose.Schema(
     senderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: "true",
+      required: true,
     },
     receiverId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: "true",
+    },
+    conversationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Conversation",
     },
     message: {
       type: String,
-      required: "true",
+      default: "",
+    },
+    ciphertext: {
+      type: String,
+      default: "",
+    },
+    iv: {
+      type: String,
+      default: "",
+    },
+    isEncrypted: {
+      type: Boolean,
+      default: false,
+    },
+    seq: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }

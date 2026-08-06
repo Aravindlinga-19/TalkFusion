@@ -15,6 +15,37 @@ const conversationSchema = new mongoose.Schema(
         default: [],
       },
     ],
+    isGroup: {
+      type: Boolean,
+      default: false,
+    },
+    groupName: {
+      type: String,
+      default: "",
+    },
+    groupAdmin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    groupAvatar: {
+      type: String,
+      default: "",
+    },
+    encryptedKeys: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        encryptedKey: {
+          type: String,
+        },
+      },
+    ],
+    lastSeq: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

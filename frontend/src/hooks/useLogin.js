@@ -1,6 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useAuthContext } from "../context/AuthContext";
+import { ensureUserKeyPair } from "../utils/crypto";
 
 const useLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -22,8 +23,23 @@ const useLogin = () => {
         throw new Error(data.error);
       }
 
-      localStorage.setItem("chat-user", JSON.stringify(data));
-      setAuthUser(data);
+      // Ensure E2EE key pair exists locally or generate & update server
+      const updatedPublicKey = await ensureUserKeyPair(
+        data._id,
+        data.publicKey,
+        async (newPubKey) => {
+          await fetch("/api/users/public-key", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ publicKey: newPubKey }),
+          });
+        }
+      );
+
+      const finalUser = { ...data, publicKey: updatedPublicKey || data.publicKey };
+
+      localStorage.setItem("chat-user", JSON.stringify(finalUser));
+      setAuthUser(finalUser);
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -33,6 +49,7 @@ const useLogin = () => {
 
   return { loading, login };
 };
+
 export default useLogin;
 
 function handleInputErrors(username, password) {

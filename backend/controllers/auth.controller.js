@@ -20,6 +20,7 @@ const login = async (req, res) => {
       fullName: user.fullName,
       username: user.username,
       profilePic: user.profilePic,
+      publicKey: user.publicKey || "",
     });
   } catch (error) {
     console.log("Error in Login Controller due to ", error);
@@ -37,7 +38,7 @@ const logout = (req, res) => {
 };
 const signup = async (req, res) => {
   try {
-    const { fullName, username, password, confirmPassword, gender } = req.body;
+    const { fullName, username, password, confirmPassword, gender, publicKey } = req.body;
 
     if (password !== confirmPassword) {
       return res.status(400).json({ error: "Passwords don't match" });
@@ -59,6 +60,7 @@ const signup = async (req, res) => {
       password: hashedPassword,
       gender,
       profilePic: gender === "male" ? boyProfilePic : girlProfilePic,
+      publicKey: publicKey || "",
     });
 
     generateTokenAndSetCookie(newUser._id, res);
@@ -69,6 +71,7 @@ const signup = async (req, res) => {
       fullName: newUser.fullName,
       username: newUser.username,
       profilePic: newUser.profilePic,
+      publicKey: newUser.publicKey || "",
     });
   } catch (error) {
     console.log("Error in Signup Controller due to ", error);

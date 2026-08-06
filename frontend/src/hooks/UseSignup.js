@@ -1,6 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useAuthContext } from "../context/AuthContext";
+import { generateKeyPair, storePrivateKey } from "../utils/crypto";
 
 const useSignup = () => {
   const [loading, setLoading] = useState(false);
@@ -24,6 +25,9 @@ const useSignup = () => {
 
     setLoading(true);
     try {
+      // Generate E2EE RSA Key Pair during registration
+      const { publicKeyPem, privateKeyPem } = await generateKeyPair();
+
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -33,6 +37,7 @@ const useSignup = () => {
           password,
           confirmPassword,
           gender,
+          publicKey: publicKeyPem,
         }),
       });
 
@@ -40,6 +45,10 @@ const useSignup = () => {
       if (data.error) {
         throw new Error(data.error);
       }
+
+      // Store Private key locally
+      storePrivateKey(data._id, privateKeyPem);
+
       localStorage.setItem("chat-user", JSON.stringify(data));
       setAuthUser(data);
     } catch (error) {
